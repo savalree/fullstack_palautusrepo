@@ -6,7 +6,6 @@ const Header = (props) => {
   }
   
   const Content = (props) => {
-    console.log("Content sai: ", props)
     return(
       <div>
         {props.parts.map((part) => (
@@ -16,22 +15,18 @@ const Header = (props) => {
   }
   
   const Total = (props) => {
-    console.log(props)
-    let summa = 0
-  
-    props.parts.forEach(part => {
-      summa += part.exercises
-    })
+    const reducedSumma = props.parts.reduce((accumulator, part) =>{
+        return accumulator += part.exercises;
+    }, 0)
   
     return(
     <div>
-    <p><strong>total of {summa} exercises</strong></p>
+    <p><strong>total of {reducedSumma} exercises</strong></p>
     </div>
     )
   }
   
   const Part = (props) => {
-    console.log("Part sai: ", props)
     return(
       <div>
         <p>{props.part} {props.exercises}</p>
@@ -40,7 +35,7 @@ const Header = (props) => {
 }
 const Course = ({course}) => {
 
-    console.log("course sai tällasen", course.name)
+    // console.log("course sai tällasen", course.name)
 
     return (
         <div>
