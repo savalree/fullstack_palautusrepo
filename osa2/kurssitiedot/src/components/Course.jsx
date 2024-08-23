@@ -15,20 +15,20 @@ const Header = (props) => {
     )
   }
   
-//   const Total = (props) => {
-//     console.log(props)
-//     let summa = 0
+  const Total = (props) => {
+    console.log(props)
+    let summa = 0
   
-//     props.parts.forEach(part => {
-//       summa += part.exercises
-//     })
+    props.parts.forEach(part => {
+      summa += part.exercises
+    })
   
-//     return(
-//     <div>
-//     <p>{summa}</p>
-//     </div>
-//     )
-//   }
+    return(
+    <div>
+    <p><strong>total of {summa} exercises</strong></p>
+    </div>
+    )
+  }
   
   const Part = (props) => {
     console.log("Part sai: ", props)
@@ -46,7 +46,7 @@ const Course = ({course}) => {
         <div>
           <Header course={course.name} />
           <Content parts={course.parts} />
-          {/* <Total parts={course.parts} /> */}
+          <Total parts={course.parts} />
         </div>
       )
 }
