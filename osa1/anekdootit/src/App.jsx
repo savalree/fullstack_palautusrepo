@@ -20,27 +20,31 @@ const App = () => {
    
   const [selected, setSelected] = useState(0)
   const [voteCount, setVoteCount] = useState(new Uint8Array(8)); 
-  console.log(voteCount)
+  const mostVotes = Math.max(...voteCount)
+  const indiceOfVotes = voteCount.indexOf(mostVotes)
 
   const handleSelectionClick = () => {
     const updatedValue = Math.floor(Math.random() * anecdotes.length)
     setSelected(updatedValue)
-    console.log(selected)
   }
 
   const handleVoteClick = () => {
-    const copy = {...voteCount}
+    const copy = [...voteCount]
     copy[selected] += 1
     setVoteCount(copy)
   }
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
       <p>has {voteCount[selected]} votes</p>
       <br></br>
       <Button handleClick={handleVoteClick} text='vote' />
       <Button handleClick={handleSelectionClick} text='next anecdote' />
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[indiceOfVotes]}</p>
+      <p>has {voteCount[indiceOfVotes]} votes</p>
     </div>
   )
 }
