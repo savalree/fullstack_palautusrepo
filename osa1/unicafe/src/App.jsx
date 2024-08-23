@@ -6,46 +6,55 @@ const Button = ({ handleClick, text }) => (
     </button>
   )
 
+const StatisticLine = (props) => {
+    if (props.total === 0){
+        return(
+            <div>No feedback given</div>
+        )
+    }
+    return(
+        <div> 
+        <p>{props.text} {props.value}</p></div>
+    )
+  }
+
+  const Statistics = (props) => {
+    return(
+      <div>
+        <StatisticLine text="good" value ={props.good} />
+        <StatisticLine text="neutral" value ={props.neutral} />
+        <StatisticLine text="bad" value ={props.bad} />
+        <StatisticLine text="all" value ={props.total} />
+        <StatisticLine text="average" value ={props.mean} />
+        <StatisticLine text="positive" value ={props.positives} />
+      </div>
+    )
+  }
+  
+
 const App = () => {
   // tallenna napit omaan tilaansa
   const [good, setGood] = useState(0)
   const [neutral, setNeutral] = useState(0)
   const [bad, setBad] = useState(0)
-  const [total, setTotal] = useState(0)
-  const [mean, setMean] = useState(0)
-  const [positives, setPositives] = useState(0)
-
+  const total = good+neutral+bad
+  const mean = (good-bad)/total
+  const positives = (good/total)*100
 
   const handleGoodClick = () => {
     const updatedValue = good + 1
     setGood(updatedValue)
-    const newTotal = updatedValue + neutral + bad
-    setTotal(newTotal)
-    const updatedMean = mean + 1
-    setMean(updatedMean)
-    console.log(updatedValue, newTotal, updatedValue/newTotal)
-    setPositives(updatedValue/newTotal * 100)
-    console.log(positives)
   }
 
   const handleNeutralClick = () => {
     const updatedValue = neutral + 1
-    setNeutral(updatedValue)
     const newTotal = updatedValue + good + bad
-    setTotal(newTotal)
-    setPositives(good/newTotal * 100)
-    console.log(positives)
+    setNeutral(updatedValue)
   }
 
   const handleBadClick = () => {
     const updatedValue = bad + 1
     setBad(updatedValue)
-    const newTotal = updatedValue + neutral + good
-    setTotal(newTotal)
-    const updatedMean = mean - 1
-    setMean(updatedMean)
-    setPositives(good/newTotal * 100)
-    console.log(positives)
   }
 
   return (
@@ -55,12 +64,7 @@ const App = () => {
     <Button handleClick={handleNeutralClick} text='neutral' />
     <Button handleClick={handleBadClick} text='bad' />
     <h1>statistics</h1>
-    <p>good {good}</p>
-    <p>neutral {neutral}</p>
-    <p>bad {bad}</p>
-    <p>all {total}</p>
-    <p>average {mean/total}</p>
-    <p>positive {positives} %</p>
+    <Statistics good={good} neutral={neutral} bad={bad} total={total} mean={mean} positives={positives}/>
     </div>
   )
 }
