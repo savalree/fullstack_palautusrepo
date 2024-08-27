@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import personService from './services/persons'
+import './index.css'
 
 const Filter = (props) => {
 return(
@@ -35,6 +36,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterParameter, setFilter] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     personService
@@ -61,6 +63,12 @@ const App = () => {
           ));
           setNewName('')
           setNewNumber('')
+          setErrorMessage(
+            `Updated '${newName}'`
+          )
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
         })
       }
     } else {
@@ -70,6 +78,12 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(
+          `Added '${newName}' to phonebook`
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       })
     }
   }
@@ -82,6 +96,12 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter(pers => pers.id !== person.id))
       })
+      setErrorMessage(
+        `Deleted '${person.name}'`
+      )
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     }
   }
 
@@ -106,9 +126,22 @@ const App = () => {
     setFilter(event.target.value)
   }
 
+  const Notification = ({ message }) => {
+    if (message === null) {
+      return null
+    }
+  
+    return (
+      <div className="error">
+        {message}
+      </div>
+    )
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={errorMessage} />
       <Filter filterParameter={filterParameter} handleFiltering={handleFiltering} />
       <h2>Add new</h2>
       <PersonForm newName={newName} newNumber={newNumber} handleNewName={handleNewName}
