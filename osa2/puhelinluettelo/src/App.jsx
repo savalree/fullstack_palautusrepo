@@ -37,6 +37,8 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterParameter, setFilter] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
+  const [statusMessage, setStatusMessage] = useState(null)
+
 
   useEffect(() => {
     personService
@@ -63,8 +65,16 @@ const App = () => {
           ));
           setNewName('')
           setNewNumber('')
-          setErrorMessage(
+          setStatusMessage(
             `Updated '${newName}'`
+          )
+          setTimeout(() => {
+            setStatusMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          setErrorMessage(
+            `Information of '${newName}' has already been removed from server`
           )
           setTimeout(() => {
             setErrorMessage(null)
@@ -78,11 +88,11 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
-        setErrorMessage(
+        setStatusMessage(
           `Added '${newName}' to phonebook`
         )
         setTimeout(() => {
-          setErrorMessage(null)
+          setStatusMessage(null)
         }, 5000)
       })
     }
@@ -96,11 +106,11 @@ const App = () => {
       .then(() => {
         setPersons(persons.filter(pers => pers.id !== person.id))
       })
-      setErrorMessage(
+      setStatusMessage(
         `Deleted '${person.name}'`
       )
       setTimeout(() => {
-        setErrorMessage(null)
+        setStatusMessage(null)
       }, 5000)
     }
   }
@@ -126,22 +136,31 @@ const App = () => {
     setFilter(event.target.value)
   }
 
-  const Notification = ({ message }) => {
+  const Notification = ({ message, isError }) => {
     if (message === null) {
       return null
     }
-  
-    return (
-      <div className="error">
-        {message}
-      </div>
-    )
+    
+    if(isError){
+      return (
+        <div className="error">
+          {message}
+        </div>
+      )
+    } else {
+      return (
+        <div className="status">
+          {message}
+        </div>
+      )
+    }
   }
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={errorMessage} />
+      <Notification message={errorMessage} isError={true}/>
+      <Notification message={statusMessage} isError={false}/>
       <Filter filterParameter={filterParameter} handleFiltering={handleFiltering} />
       <h2>Add new</h2>
       <PersonForm newName={newName} newNumber={newNumber} handleNewName={handleNewName}
