@@ -24,7 +24,7 @@ const Persons = (props) => {
 return(
   <ul>
   {props.filterPersons.map(person =>
-    <p key={person.name}>{person.name} {person.number}</p>
+    <p key={person.name}>{person.name} {person.number} <button onClick={ (event) => props.deletePerson(event,person)}>delete</button></p>
   )}
 </ul>
 )
@@ -64,6 +64,17 @@ const App = () => {
     }
   }
 
+  const deletePerson = (event,person) =>{
+    event.preventDefault()
+    if (window.confirm(`Delete ${person.name}?`)){
+      personService
+      .deletePerson(person.id)
+      .then(() => {
+        setPersons(persons.filter(pers => pers.id !== person.id))
+      })
+    }
+  }
+
   const filterPersons = filterParameter
     ? persons.filter(person =>
       person.name.toLowerCase().includes(filterParameter.toLowerCase())
@@ -93,7 +104,7 @@ const App = () => {
       <PersonForm newName={newName} newNumber={newNumber} handleNewName={handleNewName}
         handleNewNumber={handleNewNumber} addPerson={addPerson}/>
       <h2>Numbers</h2>
-      <Persons filterPersons={filterPersons} />
+      <Persons filterPersons={filterPersons} deletePerson={deletePerson} />
     </div>
   )
 
