@@ -52,7 +52,17 @@ const App = () => {
       number: newNumber
     }
     if(persons.some(person => person.name === newName)){
-      alert(`${newName} is already added to phonebook`)
+      if(window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)){
+        personService
+        .update(persons.find(person => person.name === newName).id,personObject)
+        .then(returnedPerson => {
+          setPersons(persons.map(person =>
+            person.id !== returnedPerson.id ? person : returnedPerson
+          ));
+          setNewName('')
+          setNewNumber('')
+        })
+      }
     } else {
       personService
       .create(personObject)
