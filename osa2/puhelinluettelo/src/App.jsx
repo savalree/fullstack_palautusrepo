@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
 import personService from './services/persons'
 import './index.css'
 
@@ -93,6 +92,14 @@ const App = () => {
         )
         setTimeout(() => {
           setStatusMessage(null)
+        }, 5000)
+      })
+      .catch(error => {
+        setErrorMessage(
+          error.response.data.error
+        )
+        setTimeout(() => {
+          setErrorMessage(null)
         }, 5000)
       })
     }
