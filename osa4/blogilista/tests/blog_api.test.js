@@ -9,12 +9,7 @@ const helper = require('../utils/test_helper')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-
-    const blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
-
-    const promiseArray = blogObjects.map(blog => blog.save())
-    await Promise.all(promiseArray)
+    await Blog.insertMany(helper.initialBlogs)
   })
 
 test('GET returns number of blogs in database', async () => {
