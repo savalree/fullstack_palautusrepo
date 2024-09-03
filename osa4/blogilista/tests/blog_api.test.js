@@ -1,4 +1,4 @@
-const { test, after, beforeEach } = require('node:test')
+const { test, after, beforeEach, describe } = require('node:test')
 const Blog = require('../models/blog')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
@@ -12,39 +12,67 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
   })
 
-test('GET returns number of blogs in database', async () => {
-    const response = await api.get('/api/blogs')
-
-    assert.strictEqual(response.body.length, helper.initialBlogs.length)
+describe('GET request tests', () => {
+    test('GET returns number of blogs in database', async () => {
+        const response = await api.get('/api/blogs')
+    
+        assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+    
+    test('returned blogs have an id field', async () => {
+        const response = await api.get('/api/blogs')
+        const idFieldPresent = response.body.some(blog => 'id' in blog)
+        assert.strictEqual(idFieldPresent, true)
+    })
 })
 
-test('returned blogs have an id field', async () => {
-    const response = await api.get('/api/blogs')
-    const idFieldPresent = response.body.some(blog => 'id' in blog)
-    assert.strictEqual(idFieldPresent, true)
-})
+describe('POST request tests', () => {
+    
+    test('note can be added', async () => {
+        const newBlog = {
+            title: 'This is very new',
+            author: 'SuperTest',
+            url: 'www.testi.fi',
+            likes: 69
+        }
+    
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    
+        const response = await api.get('/api/blogs')
+    
+        const titles = response.body.map(n => n.title)
+    
+        assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
+    
+        assert(titles.includes('This is very new'))
+    })
 
-test('note can be added', async () => {
-    const newBlog = {
-        title: 'This is very new',
-        author: 'SuperTest',
-        url: 'www.testi.fi',
-        likes: 69
-    }
+    test('like is initialized to 0 when value is missing', async () => {
+        const newBlog = {
+            title: 'No likes for me',
+            author: 'SuperTest',
+            url: 'www.yhyy.fi',
+        }
 
-    await api
-    .post('/api/blogs')
-    .send(newBlog)
-    .expect(201)
-    .expect('Content-Type', /application\/json/)
+        await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    
+        const response = await api.get('/api/blogs')
+    
+        const findNew = response.body.filter(n => n.title === newBlog.title)
 
-    const response = await api.get('/api/blogs')
+        const getLikes = findNew[0].likes
 
-    const titles = response.body.map(n => n.title)
-
-    assert.strictEqual(response.body.length, helper.initialBlogs.length + 1)
-
-    assert(titles.includes('This is very new'))
+        assert.strictEqual(getLikes, 0)
+    })
+    
 })
 
 after(async () => {
