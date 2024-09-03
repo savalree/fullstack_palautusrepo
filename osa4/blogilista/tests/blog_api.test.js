@@ -6,6 +6,7 @@ const supertest = require('supertest')
 const app = require('../app')
 const api = supertest(app)
 const helper = require('../utils/test_helper')
+const { url } = require('node:inspector')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
@@ -72,7 +73,41 @@ describe('POST request tests', () => {
 
         assert.strictEqual(getLikes, 0)
     })
-    
+
+    test('if title is missing from request, 400 is returned and blog is not added', async () => {
+        const titlelessBlog = {
+            author: 'mUtsis',
+            url: 'www.yhyy.fi',
+            likes: 100000
+        }
+
+        await api
+        .post('/api/blogs')
+        .send(titlelessBlog)
+        .expect(400)
+
+        const response = await api.get('/api/blogs')
+      
+        assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+
+    test('if url is missing from request, 400 is returned and blog is not added', async () => {
+        const urlessBlog = {
+            author: 'iSukkis',
+            title: '',
+            likes: 100000
+        }
+
+        await api
+        .post('/api/blogs')
+        .send(urlessBlog)
+        .expect(400)
+
+        const response = await api.get('/api/blogs')
+      
+        assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    })
+
 })
 
 after(async () => {
