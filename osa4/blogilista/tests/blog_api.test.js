@@ -9,16 +9,20 @@ const helper = require('../utils/test_helper')
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-    let blogObject = new Blog(helper.initialBlogs[0])
-    await blogObject.save()
-    blogObject = new Blog(helper.initialBlogs[1])
-    await blogObject.save()
+
+    const blogObjects = helper.initialBlogs
+    .map(blog => new Blog(blog))
+
+    const promiseArray = blogObjects.map(blog => blog.save())
+    await Promise.all(promiseArray)
   })
 
 test('GET returns number of blogs in database', async () => {
-  const response = await api.get('/api/blogs')
+    console.log('entered test')
 
-  assert.strictEqual(response.body.length, helper.initialBlogs.length)
+    const response = await api.get('/api/blogs')
+
+    assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
 // test('returned blogs have an id field', async () => {
