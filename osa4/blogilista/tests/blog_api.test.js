@@ -14,6 +14,7 @@ beforeEach(async () => {
   })
 
 describe('GET request tests', () => {
+
     test('GET returns number of blogs in database', async () => {
         const response = await api.get('/api/blogs')
     
@@ -108,6 +109,38 @@ describe('POST request tests', () => {
         assert.strictEqual(response.body.length, helper.initialBlogs.length)
     })
 
+})
+
+describe('DELETE request tests', () => {
+
+    test('successful deletion returns 204', async () => {
+        const initialBlogs = await api.get('/api/blogs')
+        const deleteThis = initialBlogs.body[0]
+
+        await api
+          .delete(`/api/blogs/${deleteThis.id}`)
+          .expect(204)
+
+        const afterDeletion = await api.get('/api/blogs')
+        
+        const blogsLeft = afterDeletion.body.length
+        assert.strictEqual(blogsLeft, helper.initialBlogs.length - 1)
+      })
+    
+    test('after deletion the deleted blog is not found', async () => {
+        const initialBlogs = await api.get('/api/blogs')
+        const deleteThis = initialBlogs.body[0]
+
+        await api
+          .delete(`/api/blogs/${deleteThis.id}`)
+          .expect(204)
+
+        const afterDeletion = await api.get('/api/blogs')
+  
+        const ids = afterDeletion.body.map(r => r.id)
+        assert(!ids.includes(initialBlogs.id))
+      })
+  
 })
 
 after(async () => {
