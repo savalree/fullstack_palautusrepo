@@ -13,18 +13,16 @@ beforeEach(async () => {
   })
 
 test('GET returns number of blogs in database', async () => {
-    console.log('entered test')
-
     const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
 })
 
-// test('returned blogs have an id field', async () => {
-//     const response = await api.get('/api/blogs')
-  
-//     assert.strictEqual(response.body.length, 3)
-// })
+test('returned blogs have an id field', async () => {
+    const response = await api.get('/api/blogs')
+    const idFieldPresent = response.body.some(blog => 'id' in blog)
+    assert.strictEqual(idFieldPresent, true)
+})
 
 after(async () => {
   await mongoose.connection.close()
