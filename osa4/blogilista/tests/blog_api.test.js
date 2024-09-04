@@ -1,5 +1,6 @@
 const { test, after, beforeEach, describe } = require('node:test')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
@@ -11,9 +12,12 @@ const { url } = require('node:inspector')
 beforeEach(async () => {
     await Blog.deleteMany({})
     await Blog.insertMany(helper.initialBlogs)
+    await User.deleteMany({})
+    await User.insertMany(helper.initialUsers)
+
   })
 
-describe('GET request tests', () => {
+describe('Blog GET request tests', () => {
 
     test('GET returns number of blogs in database', async () => {
         const response = await api.get('/api/blogs')
@@ -28,9 +32,17 @@ describe('GET request tests', () => {
     })
 })
 
-describe('POST request tests', () => {
+describe('User GET request tests', () => {
+    test('GET returns number of users in database', async () => {
+        const response = await api.get('/api/blogs')
+        
+        assert.strictEqual(response.body.length, helper.initialUsers.length)
+    })
+})
+
+describe('Blog POST request tests', () => {
     
-    test('note can be added', async () => {
+    test('blog can be added', async () => {
         const newBlog = {
             title: 'This is very new',
             author: 'SuperTest',
@@ -111,7 +123,140 @@ describe('POST request tests', () => {
 
 })
 
-describe('DELETE request tests', () => {
+describe('User POST request tests', () => {
+    test('user can be added', async () => {
+        const newUser = {
+            username: 'postTest',
+            name: 'SuperTest Post',
+            password: 'sairaanSalainen'
+        }
+    
+        await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    
+        const response = await api.get('/api/users')
+    
+        const usernames = response.body.map(n => n.username)
+    
+        assert.strictEqual(response.body.length, helper.initialUsers.length + 1)
+    
+        assert(usernames.includes('postTest'))
+    })
+
+    test('if username is too short, creation fails with proper status code and message', async () => {
+        const initialUsers = await api.get('/api/users')
+
+        const newUser = {
+            username: 'hm',
+            name: 'SuperTest Post',
+            password: 'ei onnistu'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+        
+        const currentUsers = await api.get('/api/users')
+
+        assert(result.body.error.includes('username is too short'))
+
+        assert.strictEqual(initialUsers.length, currentUsers.length)
+    })
+
+    test('if password is too short, creation fails with proper status code and message', async () => {
+        const initialUsers = await api.get('/api/users')
+
+        const newUser = {
+            username: 'hmmm',
+            name: 'SuperTest Post',
+            password: 'ei'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+        
+        const currentUsers = await api.get('/api/users')
+
+        assert(result.body.error.includes('password is too short'))
+
+        assert.strictEqual(initialUsers.length, currentUsers.length)
+    })
+
+    test('if username is missing, creation fails with proper status code and message', async () => {
+        const initialUsers = await api.get('/api/users')
+
+        const newUser = {
+            name: 'SuperTest Post',
+            password: 'eiOnnistu'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+        
+        const currentUsers = await api.get('/api/users')
+
+        assert(result.body.error.includes('username is missing'))
+
+        assert.strictEqual(initialUsers.length, currentUsers.length)
+    })
+
+    test('if password is missing, creation fails with proper status code and message', async () => {
+        const initialUsers = await api.get('/api/users')
+
+        const newUser = {
+            username: 'hmmm',
+            name: 'SuperTest Post'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+        
+        const currentUsers = await api.get('/api/users')
+
+        assert(result.body.error.includes('password is missing'))
+
+        assert.strictEqual(initialUsers.length, currentUsers.length)
+    })
+
+
+    test('if username already exists, creation fails with proper status code and message', async () => {
+        const initialUsers = await api.get('/api/users')
+
+        const newUser = {
+            username: initialUsers.body[0].username,
+            name: 'SuperTest Post',
+            password: 'ei onnistu'
+        }
+
+        const result = await api
+        .post('/api/users')
+        .send(newUser)
+        .expect(400)
+        .expect('Content-Type', /application\/json/)
+        
+        const currentUsers = await api.get('/api/users')
+
+        assert(result.body.error.includes('username must be unique'))
+
+        assert.strictEqual(initialUsers.length, currentUsers.length)
+    })
+})
+
+describe('Blog DELETE request tests', () => {
 
     test('successful deletion returns 204', async () => {
         const initialBlogs = await api.get('/api/blogs')
@@ -143,7 +288,7 @@ describe('DELETE request tests', () => {
   
 })
 
-describe('PUT request tests', () => {
+describe('Blog PUT request tests', () => {
 
     test('editing one field changes its value', async () => {
         const initialBlogs = await api.get('/api/blogs')
@@ -174,6 +319,7 @@ describe('PUT request tests', () => {
         assert.strictEqual(initialBlogs.body.length,blogsAfterChange.body.length)
     }) 
 })
+
 
 after(async () => {
   await mongoose.connection.close()
