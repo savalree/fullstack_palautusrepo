@@ -125,7 +125,7 @@ describe('DELETE request tests', () => {
         
         const blogsLeft = afterDeletion.body.length
         assert.strictEqual(blogsLeft, helper.initialBlogs.length - 1)
-      })
+    })
     
     test('after deletion the deleted blog is not found', async () => {
         const initialBlogs = await api.get('/api/blogs')
@@ -139,8 +139,40 @@ describe('DELETE request tests', () => {
   
         const ids = afterDeletion.body.map(r => r.id)
         assert(!ids.includes(initialBlogs.id))
-      })
+    })
   
+})
+
+describe('PUT request tests', () => {
+
+    test('editing one field changes its value', async () => {
+        const initialBlogs = await api.get('/api/blogs')
+        const oldBlog = initialBlogs.body[0]
+        const copyBlog = { ...oldBlog, likes: 69 }
+
+        await api
+        .put(`/api/blogs/${copyBlog.id}`)
+        .send(copyBlog)
+        .expect(200)
+
+        const blogsAfterChange = await api.get('/api/blogs')
+
+        assert.notEqual(oldBlog.likes,blogsAfterChange.body[0].likes)
+    }) 
+
+    test('editing blog does not increase the number of blogs', async () => {
+        const initialBlogs = await api.get('/api/blogs')
+        const oldBlog = initialBlogs.body[0]
+        const copyBlog = { ...oldBlog, likes: 69 }
+
+        await api
+        .put(`/api/blogs/${copyBlog.id}`)
+        .expect(200)
+
+        const blogsAfterChange = await api.get('/api/blogs')
+
+        assert.strictEqual(initialBlogs.body.length,blogsAfterChange.body.length)
+    }) 
 })
 
 after(async () => {
