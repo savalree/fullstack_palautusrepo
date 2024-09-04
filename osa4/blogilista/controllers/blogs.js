@@ -13,8 +13,6 @@ blogsRouter.post('/', async (request, response) => {
   const body = request.body
 
   const user = await User.findById(body.userId)
-  console.log(user)
-
 
   if(!body.title || !body.url){
     return response.status(400).end()
