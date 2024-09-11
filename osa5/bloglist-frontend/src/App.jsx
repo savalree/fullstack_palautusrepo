@@ -1,27 +1,15 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
-
-const BlogForm = (props) => {
-  return (
-    <form onSubmit={props.addBlog}>
-      <div>title: <input value={props.blogTitle} onChange={props.handleNewTitle}/></div>
-      <div>author: <input value={props.blogAuthor} onChange={props.handleNewAuthor}/></div>
-      <div>url: <input value={props.blogUrl} onChange={props.handleNewUrl}/></div>
-      <div>
-        <button type="submit">create</button>
-      </div>
-    </form>
-  )
-}
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [statusMessage, setStatusMessage] = useState(null)
-  const [newBlog, setNewBlog] = useState('')
   const [blogTitle, setNewTitle] = useState('')
   const [blogAuthor, setNewAuthor] = useState('')
   const [blogUrl, setNewUrl] = useState('')
@@ -29,6 +17,7 @@ const App = () => {
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
 
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -96,6 +85,8 @@ const App = () => {
       author: blogAuthor,
       url: blogUrl
     }
+
+    blogFormRef.current.toggleVisibility()
   
     blogService
       .create(blogObject)
@@ -104,7 +95,6 @@ const App = () => {
         setNewTitle('')
         setNewUrl('')
         setNewAuthor('')
-        setNewBlog('')
         setStatusMessage(
           `new blog is added: '${blogTitle}'`
         )
@@ -147,8 +137,10 @@ const App = () => {
        <button onClick={handleLogout}>logout</button>
 
        <h2>Create a blog</h2>
+       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
        <BlogForm blogTitle={blogTitle} blogAuthor={blogAuthor} blogUrl={blogUrl} addBlog={addBlog}
        handleNewTitle={handleNewTitle} handleNewUrl={handleNewUrl} handleNewAuthor={handleNewAuthor}/>
+      </Togglable>
 
        <h2>Blogs</h2>
        <ul>
