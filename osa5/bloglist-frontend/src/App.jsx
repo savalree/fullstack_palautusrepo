@@ -10,9 +10,6 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [statusMessage, setStatusMessage] = useState(null)
-  const [blogTitle, setNewTitle] = useState('')
-  const [blogAuthor, setNewAuthor] = useState('')
-  const [blogUrl, setNewUrl] = useState('')
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('') 
   const [user, setUser] = useState(null)
@@ -78,51 +75,26 @@ const App = () => {
     </form>      
   )
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: blogTitle,
-      author: blogAuthor,
-      url: blogUrl
-    }
-
-    blogFormRef.current.toggleVisibility()
-  
-    blogService
-      .create(blogObject)
-        .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setNewTitle('')
-        setNewUrl('')
-        setNewAuthor('')
-        setStatusMessage(
-          `new blog is added: '${blogTitle}'`
-        )
-        setTimeout(() => {
-          setStatusMessage(null)
-        }, 5000)
-      })
-  }
-
-  const handleNewTitle = (event) => {
-    console.log(event.target.value)
-    setNewTitle(event.target.value)
-  }
-
-  const handleNewAuthor = (event) => {
-    console.log(event.target.value)
-    setNewAuthor(event.target.value)
-  }
-
-  const handleNewUrl = (event) => {
-    console.log(event.target.value)
-    setNewUrl(event.target.value)
-  }
-
   const handleLogout = async (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedUser')
     setUser()
+  }
+
+  const handleStatusMessage = (message) => {
+    setStatusMessage(message)
+    setTimeout(() => {
+      setStatusMessage(null)
+    }, 5000)
+  }
+
+  const addBlog = (blogObject) => {
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        blogFormRef.current.toggleVisibility()
+      })
   }
 
   return (
@@ -138,9 +110,8 @@ const App = () => {
 
        <h2>Create a blog</h2>
        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-       <BlogForm blogTitle={blogTitle} blogAuthor={blogAuthor} blogUrl={blogUrl} addBlog={addBlog}
-       handleNewTitle={handleNewTitle} handleNewUrl={handleNewUrl} handleNewAuthor={handleNewAuthor}/>
-      </Togglable>
+       <BlogForm createBlog={addBlog} setStatusMessage={handleStatusMessage}/>
+       </Togglable>
 
        <h2>Blogs</h2>
        <ul>
