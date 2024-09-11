@@ -1,12 +1,11 @@
-h1 {
-    color: black;
-    font-style: bold;
-  }
-  
-  .note {
-    color: grey;
-    padding-top: 3px;
-    font-size: 15px;
+.status {
+    color: green;
+    background: lightgrey;
+    font-size: 20px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
   }
   
   .error {

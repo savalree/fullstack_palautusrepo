@@ -20,6 +20,7 @@ const BlogForm = (props) => {
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
+  const [statusMessage, setStatusMessage] = useState(null)
   const [newBlog, setNewBlog] = useState('')
   const [blogTitle, setNewTitle] = useState('')
   const [blogAuthor, setNewAuthor] = useState('')
@@ -104,6 +105,12 @@ const App = () => {
         setNewUrl('')
         setNewAuthor('')
         setNewBlog('')
+        setStatusMessage(
+          `new blog is added: '${blogTitle}'`
+        )
+        setTimeout(() => {
+          setStatusMessage(null)
+        }, 5000)
       })
   }
 
@@ -131,7 +138,8 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <Notification message={errorMessage} isError={true}/>
+      <Notification message={statusMessage} isError={false}/>
 
       {!user && loginForm()}
       {user && <div>
