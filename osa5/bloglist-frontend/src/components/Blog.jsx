@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, onUpdateBlog }) => {
+const Blog = ({ blog, onUpdateBlog, deleteBlog }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const blogStyle = {
@@ -14,7 +14,7 @@ const Blog = ({ blog, onUpdateBlog }) => {
 
   const toggleText = () => {
     setIsExpanded(!isExpanded)
-  };
+  }
 
   const updateLikes = async () => {
     const updatedBlog = {
@@ -28,6 +28,10 @@ const Blog = ({ blog, onUpdateBlog }) => {
     if (onUpdateBlog) onUpdateBlog(completeReturnedBlog)
   }
 
+  const deleteThis = () => {
+    deleteBlog(blog)
+  }
+
 return (
   <div style={blogStyle}>
     <div> 
@@ -37,9 +41,15 @@ return (
       <div>
         {blog.url} <br></br>
         {blog.likes} <button onClick={updateLikes}>like</button> <br></br>
-        {blog.user.username}
+        {blog.user.username}<br></br>
       </div>
     )}
+    {isExpanded && blog.user.username === "testi" && (
+      <div>
+        <button onClick={deleteThis}>remove</button>
+      </div>
+    )}
+
   </div>
 )}
 

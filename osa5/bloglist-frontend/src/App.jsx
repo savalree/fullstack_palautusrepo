@@ -103,6 +103,16 @@ const App = () => {
     ))
   }
 
+  const deleteBlog = (deleteThis) => {
+    if (window.confirm(`Remove blog "${deleteThis.title}"?`)){
+      blogService
+      .deleteBlog(deleteThis.id)
+      .then(() => {
+        setBlogs(blogs.filter(blog => blog.id !== deleteThis.id))
+      })
+    }
+  }
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -122,7 +132,7 @@ const App = () => {
        <h2>Blogs</h2>
        <ul>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} onUpdateBlog={handleBlogUpdate} />
+        <Blog key={blog.id} blog={blog} onUpdateBlog={handleBlogUpdate} deleteBlog={deleteBlog} />
       )}
       </ul>
       </div>
