@@ -98,7 +98,6 @@ const App = () => {
   }
 
   const handleBlogUpdate = (updatedBlog) => {
-    console.log("i want to handle update", updatedBlog)
     setBlogs(blogs.map(blog =>
       blog.id === updatedBlog.id ? updatedBlog : blog
     ))

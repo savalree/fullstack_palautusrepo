@@ -13,20 +13,19 @@ const Blog = ({ blog, onUpdateBlog }) => {
   }
 
   const toggleText = () => {
-    setIsExpanded(!isExpanded);
+    setIsExpanded(!isExpanded)
   };
 
-  const updateLikes = () => {
+  const updateLikes = async () => {
     const updatedBlog = {
       ...blog,
-      likes: blog.likes+1
+      likes: blog.likes+1,
+      user: blog.user
     }
 
-    blogService
-    .update(blog.id, updatedBlog)
-    .then(returnedBlog => {
-      if (onUpdateBlog) onUpdateBlog(returnedBlog)
-    })
+    const apiReturned = await blogService.update(blog.id, updatedBlog)
+    const completeReturnedBlog = { ...apiReturned, user: blog.user }
+    if (onUpdateBlog) onUpdateBlog(completeReturnedBlog)
   }
 
 return (
