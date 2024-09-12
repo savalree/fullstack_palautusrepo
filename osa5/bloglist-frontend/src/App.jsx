@@ -97,6 +97,13 @@ const App = () => {
       })
   }
 
+  const handleBlogUpdate = (updatedBlog) => {
+    console.log("i want to handle update", updatedBlog)
+    setBlogs(blogs.map(blog =>
+      blog.id === updatedBlog.id ? updatedBlog : blog
+    ))
+  }
+
   return (
     <div>
       <h1>Blogs</h1>
@@ -116,7 +123,7 @@ const App = () => {
        <h2>Blogs</h2>
        <ul>
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} onUpdateBlog={handleBlogUpdate} />
       )}
       </ul>
       </div>
