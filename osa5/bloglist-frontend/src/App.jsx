@@ -9,10 +9,10 @@ import loginService from './services/login'
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
-  const [password, setPassword] = useState('') 
+  const [password, setPassword] = useState('')
   const [statusMessage, setStatusMessage] = useState(null)
   const [user, setUser] = useState(null)
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
 
   const blogFormRef = useRef()
 
@@ -34,12 +34,12 @@ const App = () => {
 
   const handleLogin = async (event) => {
     event.preventDefault()
-    
+
     try {
       const user = await loginService.login({
         username, password,
       })
-      window.localStorage.setItem('loggedUser', JSON.stringify(user)) 
+      window.localStorage.setItem('loggedUser', JSON.stringify(user))
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -56,7 +56,7 @@ const App = () => {
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -65,7 +65,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -73,7 +73,7 @@ const App = () => {
         />
       </div>
       <button type="submit">login</button>
-    </form>      
+    </form>
   )
 
   const handleLogout = async (event) => {
@@ -106,10 +106,10 @@ const App = () => {
   const deleteBlog = (deleteThis) => {
     if (window.confirm(`Remove blog "${deleteThis.title}"?`)){
       blogService
-      .deleteBlog(deleteThis.id)
-      .then(() => {
-        setBlogs(blogs.filter(blog => blog.id !== deleteThis.id))
-      })
+        .deleteBlog(deleteThis.id)
+        .then(() => {
+          setBlogs(blogs.filter(blog => blog.id !== deleteThis.id))
+        })
     }
   }
 
@@ -121,22 +121,22 @@ const App = () => {
 
       {!user && loginForm()}
       {user && <div>
-       <p>{user.username} logged in</p>
-       <button onClick={handleLogout}>logout</button>
+        <p>{user.username} logged in</p>
+        <button onClick={handleLogout}>logout</button>
 
-       <h2>Create a blog</h2>
-       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-       <BlogForm createBlog={addBlog} setStatusMessage={handleStatusMessage}/>
-       </Togglable>
+        <h2>Create a blog</h2>
+        <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+          <BlogForm createBlog={addBlog} setStatusMessage={handleStatusMessage}/>
+        </Togglable>
 
-       <h2>Blogs</h2>
-       <ul>
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} onUpdateBlog={handleBlogUpdate} deleteBlog={deleteBlog} />
-      )}
-      </ul>
+        <h2>Blogs</h2>
+        <ul>
+          {blogs.map(blog =>
+            <Blog key={blog.id} blog={blog} onUpdateBlog={handleBlogUpdate} deleteBlog={deleteBlog} username={user.username} />
+          )}
+        </ul>
       </div>
-    } 
+      }
     </div>
   )
 }

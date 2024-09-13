@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import blogService from '../services/blogs'
 
-const Blog = ({ blog, onUpdateBlog, deleteBlog }) => {
+const Blog = ({ blog, onUpdateBlog, deleteBlog, username }) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const blogStyle = {
@@ -32,25 +32,25 @@ const Blog = ({ blog, onUpdateBlog, deleteBlog }) => {
     deleteBlog(blog)
   }
 
-return (
-  <div style={blogStyle}>
-    <div> 
-      "{blog.title}" by {blog.author} <button onClick={toggleText}>{isExpanded ? 'hide' : 'view'}</button>
-    </div>
-    {isExpanded && (
+  return (
+    <div style={blogStyle}>
       <div>
-        {blog.url} <br></br>
-        {blog.likes} <button onClick={updateLikes}>like</button> <br></br>
-        {blog.user.username}<br></br>
+        {blog.title} by {blog.author} <button onClick={toggleText}>{isExpanded ? 'hide' : 'view'}</button>
       </div>
-    )}
-    {isExpanded && blog.user.username === "testi" && (
-      <div>
-        <button onClick={deleteThis}>remove</button>
-      </div>
-    )}
+      {isExpanded && (
+        <div>
+          {blog.url} <br></br>
+          {blog.likes} <button onClick={updateLikes}>like</button> <br></br>
+          {blog.user.username}<br></br>
+        </div>
+      )}
+      {isExpanded && blog.user.username === username && (
+        <div>
+          <button onClick={deleteThis}>remove</button>
+        </div>
+      )}
 
-  </div>
-)}
+    </div>
+  )}
 
 export default Blog

@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 
 const BlogForm = ({ createBlog, setStatusMessage }) => {
   const [blogTitle, setNewTitle] = useState('')
@@ -25,7 +25,7 @@ const BlogForm = ({ createBlog, setStatusMessage }) => {
       author: blogAuthor,
       url: blogUrl
     }
-  
+
     createBlog(blogObject)
 
     setNewTitle('')
@@ -34,16 +34,16 @@ const BlogForm = ({ createBlog, setStatusMessage }) => {
     setStatusMessage(`New blog was created: "${blogTitle}"`)
   }
 
-    return (
-      <form onSubmit={addBlog}>
-        <div>title: <input value={blogTitle} onChange={handleNewTitle}/></div>
-        <div>author: <input value={blogAuthor} onChange={handleNewAuthor}/></div>
-        <div>url: <input value={blogUrl} onChange={handleNewUrl}/></div>
-        <div>
-          <button type="submit">create</button>
-        </div>
-      </form>
-    )
-  }
+  return (
+    <form onSubmit={addBlog}>
+      <div>title: <input value={blogTitle} onChange={handleNewTitle}/></div>
+      <div>author: <input value={blogAuthor} onChange={handleNewAuthor}/></div>
+      <div>url: <input value={blogUrl} onChange={handleNewUrl}/></div>
+      <div>
+        <button type="submit">create</button>
+      </div>
+    </form>
+  )
+}
 
-  export default BlogForm
+export default BlogForm
