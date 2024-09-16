@@ -4,7 +4,6 @@ import '@testing-library/jest-dom'
 import Blog from './Blog'
 import userEvent from '@testing-library/user-event'
 
-
 test('renders title', () => {
   const blog = {
     title: 'TestiRenderöinti',
@@ -46,15 +45,17 @@ test('clicking the button twice calls event handler twice', async () => {
     title: 'TestiRenderöinti',
     author: 'SuperTest',
     url: 'www.testi.fi',
-    likes: 0,
+    likes: 22,
     user: {
       username: 'testi'
     }
   }
 
+  vi.mock('../services/blogs')
+
   const mockHandler = vi.fn()
 
-  render(<Blog blog={blog} updateLikes={mockHandler}/>)
+  render(<Blog blog={blog} onUpdateBlog={mockHandler}/>)
 
   const user = userEvent.setup()
 
@@ -62,7 +63,8 @@ test('clicking the button twice calls event handler twice', async () => {
   await user.click(viewButton)
 
   const likeButton = screen.getByText('like')
-  user.click(likeButton)
-  user.click(likeButton)
-  expect(mockHandler.mock.calls).toHaveLength(1)
+  await user.click(likeButton)
+  await user.click(likeButton)
+
+  expect(mockHandler.mock.calls).toHaveLength(2)
 })
