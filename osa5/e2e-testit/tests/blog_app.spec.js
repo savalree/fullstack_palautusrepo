@@ -15,9 +15,28 @@ describe('Blog app', () => {
       })
 
     test('Login form is shown', async ({ page }) => {
-        await page.goto('http://localhost:5173')
-
         const locator = await page.getByText('Blogs')
         await expect(locator).toBeVisible()
+    })
+
+    describe('Login', () => {
+        test('succeeds with correct credentials', async ({ page }) => {
+            await page.getByTestId('username').fill('mluukkai')
+            await page.getByTestId('password').fill('salainen')
+          
+            await page.getByRole('button', { name: 'login' }).click() 
+          
+            await expect(page.getByText('mluukkai logged in')).toBeVisible()
+        })
+    
+        test('fails with wrong credentials', async ({ page }) => {
+            await page.getByTestId('username').fill('mluukkai')
+            await page.getByTestId('password').fill('virheTulloo')
+          
+            await page.getByRole('button', { name: 'login' }).click() 
+          
+            const errorDiv = await page.locator('.error')
+            await expect(errorDiv).toContainText('wrong credentials')
+        })
     })
 })
