@@ -64,12 +64,26 @@ describe('Blog app', () => {
                 await createBlogWith(page, 'Alustettu Blogi on Alustettu','Play W Right','www.jaa.fi')
             })
 
-            test('blog can be liked', async ({ page }) => {
+            test('created blog can be liked', async ({ page }) => {
                 await page.getByRole('button', { name: 'view' }).click() 
                 await expect(page.getByText('0')).toBeVisible()
 
                 await page.getByRole('button', { name: 'like' }).click() 
                 await expect(page.getByText('1')).toBeVisible()
+            })
+
+            test('created blog can be deleted', async ({ page }) => {
+                await page.getByRole('button', { name: 'view' }).click() 
+                await expect(page.getByText('remove')).toBeVisible()
+
+                await page.getByRole('button', { name: 'remove' }).click() 
+
+                page.on('dialog', async (dialog) => {
+                    expect(dialog.message()).toEqual('Remove blog "Alustettu Blogi on Alustettu"')
+                    await dialog.accept()
+                  })
+            
+                await expect(page.getByText('Alustettu Blogi on Alustettu by Play W. Right')).not.toBeVisible()
             })
         })
     })  
