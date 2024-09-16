@@ -36,9 +36,9 @@ const BlogForm = ({ createBlog, setStatusMessage }) => {
 
   return (
     <form onSubmit={addBlog}>
-      <div>title: <input value={blogTitle} onChange={handleNewTitle} placeholder='title'/></div>
-      <div>author: <input value={blogAuthor} onChange={handleNewAuthor} placeholder='author'/></div>
-      <div>url: <input value={blogUrl} onChange={handleNewUrl} placeholder='url'/></div>
+      <div>title: <input data-testid='title' value={blogTitle} onChange={handleNewTitle} placeholder='title'/></div>
+      <div>author: <input data-testid='author' value={blogAuthor} onChange={handleNewAuthor} placeholder='author'/></div>
+      <div>url: <input data-testid='url' value={blogUrl} onChange={handleNewUrl} placeholder='url'/></div>
       <div>
         <button type="submit">create</button>
       </div>
