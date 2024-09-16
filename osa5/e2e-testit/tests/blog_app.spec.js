@@ -1,5 +1,5 @@
 const { beforeEach, test, describe, expect } = require('@playwright/test')
-const { loginWith } = require('./helper')
+const { loginWith, createBlogWith } = require('./helper')
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -58,5 +58,19 @@ describe('Blog app', () => {
 
             await expect(page.getByText('Puhas Kass by Limps Limps')).toBeVisible()
         })
-      })
+
+        describe('when blog is created',() => {
+            beforeEach(async ({ page }) => {    
+                await createBlogWith(page, 'Alustettu Blogi on Alustettu','Play W Right','www.jaa.fi')
+            })
+
+            test('blog can be liked', async ({ page }) => {
+                await page.getByRole('button', { name: 'view' }).click() 
+                await expect(page.getByText('0')).toBeVisible()
+
+                await page.getByRole('button', { name: 'like' }).click() 
+                await expect(page.getByText('1')).toBeVisible()
+            })
+        })
+    })  
 })
