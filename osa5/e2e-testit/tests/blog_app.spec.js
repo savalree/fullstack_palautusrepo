@@ -11,6 +11,14 @@ describe('Blog app', () => {
             password: 'salainen'
           }
         })
+
+        await request.post('http://localhost:3003/api/users', {
+            data: {
+              name: 'Testi Kissala',
+              username: 'kiisu',
+              password: 'salainen'
+            }
+          })
     
         await page.goto('http://localhost:5173')
       })
@@ -84,6 +92,22 @@ describe('Blog app', () => {
                   })
             
                 await expect(page.getByText('Alustettu Blogi on Alustettu by Play W. Right')).not.toBeVisible()
+            })
+        })
+
+        describe('when user is not creator', () => {
+            beforeEach(async ({ page }) => {    
+                await page.getByRole('button', { name: 'logout' }).click() 
+                await loginWith(page, 'kiisu', 'salainen')
+                await createBlogWith(page, 'Ei voi poistaa','Kissala','www.haha.fi')
+                await page.getByRole('button', { name: 'logout' }).click() 
+                await loginWith(page, 'mluukkai', 'salainen')
+            })
+
+            test('non-creator cannot delete blog', async ({ page }) => {
+                await expect(page.getByText('Ei voi poistaa by Kissala')).toBeVisible()
+                await page.getByRole('button', { name: 'view' }).click() 
+                await expect(page.getByText('remove')).not.toBeVisible()
             })
         })
     })  
