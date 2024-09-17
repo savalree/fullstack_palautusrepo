@@ -84,12 +84,17 @@ describe('Blog app', () => {
                 await expect(page.getByText('Alustettu Blogi on Alustettu by Play W Right')).toBeVisible()
                 await createAnotherBlogWith(page, 'Kilpaileva blogi','C. Y. Press','www.linkki.fi')
                 await expect(page.getByText('Kilpaileva blogi by C. Y. Press')).toBeVisible()
+                
+                const firstBlog = await page.locator('#root > div > div > ul > div:nth-child(1) > div')
+                await expect(firstBlog).toHaveText('Alustettu Blogi on Alustettu by Play W Right view')
 
-                // await page.getByRole('button', { name: 'view' }).click() 
-                // await expect(page.getByText('0')).toBeVisible()
-                // await page.reload()
-                // await page.getByRole('button', { name: 'like' }).click() 
-                // await expect(page.getByText('1')).toBeVisible()
+                await page.locator('#root > div > div > ul > div:nth-child(2) > div > button').click() 
+                await page.locator('#root > div > div > ul > div:nth-child(2) > div:nth-child(2) > button').click()
+                await page.locator('#root > div > div > ul > div:nth-child(2) > div:nth-child(2) > button').click()
+                await page.reload()
+
+                const newfirstBlog = await page.locator('#root > div > div > ul > div:nth-child(1) > div')
+                await expect(newfirstBlog).toHaveText('Kilpaileva blogi by C. Y. Press view')
             })
 
             test('created blog can be deleted', async ({ page }) => {
