@@ -11,5 +11,12 @@ const createBlogWith = async (page, title, author, url) => {
   await page.getByTestId('url').fill(url)
   await page.getByRole('button', { name: 'create' }).click() 
 }
+
+const createAnotherBlogWith = async (page, title, author, url) => {
+  await page.getByTestId('title').fill(title)
+  await page.getByTestId('author').fill(author)
+  await page.getByTestId('url').fill(url)
+  await page.getByRole('button', { name: 'create' }).click() 
+}
   
-  export { loginWith, createBlogWith }
+  export { loginWith, createBlogWith, createAnotherBlogWith }

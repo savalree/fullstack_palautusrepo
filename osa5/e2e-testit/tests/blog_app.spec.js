@@ -1,5 +1,5 @@
 const { beforeEach, test, describe, expect } = require('@playwright/test')
-const { loginWith, createBlogWith } = require('./helper')
+const { loginWith, createBlogWith, createAnotherBlogWith } = require('./helper')
 
 describe('Blog app', () => {
     beforeEach(async ({ page, request }) => {
@@ -80,18 +80,30 @@ describe('Blog app', () => {
                 await expect(page.getByText('1')).toBeVisible()
             })
 
+            test('blog with most likes is shown first', async ({ page }) => {
+                await expect(page.getByText('Alustettu Blogi on Alustettu by Play W Right')).toBeVisible()
+                await createAnotherBlogWith(page, 'Kilpaileva blogi','C. Y. Press','www.linkki.fi')
+                await expect(page.getByText('Kilpaileva blogi by C. Y. Press')).toBeVisible()
+
+                // await page.getByRole('button', { name: 'view' }).click() 
+                // await expect(page.getByText('0')).toBeVisible()
+                // await page.reload()
+                // await page.getByRole('button', { name: 'like' }).click() 
+                // await expect(page.getByText('1')).toBeVisible()
+            })
+
             test('created blog can be deleted', async ({ page }) => {
                 await page.getByRole('button', { name: 'view' }).click() 
                 await expect(page.getByText('remove')).toBeVisible()
 
-                await page.getByRole('button', { name: 'remove' }).click() 
-
                 page.on('dialog', async (dialog) => {
-                    expect(dialog.message()).toEqual('Remove blog "Alustettu Blogi on Alustettu"')
+                    expect(dialog.message()).toEqual('Remove blog "Alustettu Blogi on Alustettu"?')
                     await dialog.accept()
-                  })
+                })
+
+                await page.getByRole('button', { name: 'remove' }).click() 
             
-                await expect(page.getByText('Alustettu Blogi on Alustettu by Play W. Right')).not.toBeVisible()
+                await expect(page.getByText('Alustettu Blogi on Alustettu by Play W Right')).not.toBeVisible()
             })
         })
 
